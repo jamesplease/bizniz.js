@@ -19,10 +19,6 @@ This library is a collection of constant-time utilities that produce the
 same result as the looping approach, yet take the same time no matter how large
 your time scale is. Three days will be computed just as fast as a million days.
 
-### Getting Started
-
-
-
 ### Inclusive and Exclusive Intervals
 
 Working with intervals of time is a surprisingly nuanced topic. It's obvious
@@ -45,33 +41,47 @@ inclusive start and an exclusive end.
 
 ### API
 
-`isWeekDay( date )`
+###### `isWeekDay( date )`
 
 Returns a boolean representing whether or not `date` is a week day. `date` must
 be a JavaScript Date object.
 
-`isWeekendDay( date )`
+###### `isWeekendDay( date )`
 
 Like `isWeekDay`, but for weekends. Pass in a `date`, and you'll get back a
 boolean.
 
-`weekDaysBetween( startDate, endDate )`
+###### `weekDaysBetween( startDate, endDate )`
 
 Computes the number of week days between `startDate` and `endDate`. If `endDate`
 is after `startDate`, then the number returned will be positive. Otherwise,
 it will be negative.
 
-`weekendDaysBetween( startDate, endDate )`
+###### `weekendDaysBetween( startDate, endDate )`
 
 Just like `weekDaysBetween`, but for the weekend.
 
-`addWeekDays( date, days )`
+###### `addWeekDays( date, days )`
 
 Pass in `days`, which is a number of week days, and a `date`, and a new Date
 object will be returned representing the addition of the two. Accepts positive
 and negative `days`.
 
-`subtractWeekDays( date, days )`
+###### `subtractWeekDays( date, days )`
 
 Just like `addWeekDays`, but in the opposite direction. It, too, accepts
 positive and negative values.
+
+###### `dateIsBefore( startDate, endDate )`
+
+Returns `true` is `startDate` comes before `endDate`. Otherwise, it returns
+`false`.
+
+###### `daysBetween( startDate, endDate )`
+
+Returns the number of days between `startDate` and `endDate`. If `endDate`
+comes before `startDate`, then the value will be negative.
+
+###### `addDays( date, days )`
+
+Adds `days` number of days to `date`. Returns a new Date object.

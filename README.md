@@ -33,7 +33,7 @@ Import it into your application, and use the main export.
 ```js
 import bizniz from 'bizniz';
 
-const daysBetween = bizniz.addWeekDays(day, 20);
+const newDate = bizniz.addWeekDays(day, 20);
 ```
 
 ### Inclusive and Exclusive Intervals

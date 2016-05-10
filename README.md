@@ -20,6 +20,22 @@ same result as the looping approach, yet are computed the same speed no matter
 how large your time scale is. Three days will be computed just as fast as a
 million days.
 
+### Getting Started
+
+Install this library with npm.
+
+```js
+npm install bizniz
+```
+
+Import it into your application, and use the main export.
+
+```js
+import bizniz from 'bizniz';
+
+const daysBetween = bizniz.addWeekDays(day, 20);
+```
+
 ### Inclusive and Exclusive Intervals
 
 Working with intervals of time is a surprisingly nuanced topic. When a function

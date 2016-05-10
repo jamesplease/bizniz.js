@@ -20,6 +20,9 @@ same result as the looping approach, yet are computed the same speed no matter
 how large your time scale is. Three days will be computed just as fast as a
 million days.
 
+*A [Moment.js](http://momentjs.com/)-compatible version of this library can be
+found [here](https://github.com/jmeas/moment-business).*
+
 ### Getting Started
 
 Install this library with npm.

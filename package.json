@@ -1,6 +1,6 @@
 {
   "name": "bizniz",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Constant-time business utilities for the western work week",
   "main": "dist/bizniz.js",
   "scripts": {

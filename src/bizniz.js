@@ -1,6 +1,8 @@
 import containedPeriodicValues from 'contained-periodic-values';
 
 const WEEKEND_DAYS = [0, 6];
+// The number of milliseconds in one day
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 // `date` - The Date to be coerced to UTC time
 // Returns a new `Date` object.
@@ -22,7 +24,7 @@ const bizniz = {
   },
 
   daysBetween(startDate, endDate) {
-    return (treatAsUTC(endDate) - treatAsUTC(startDate)) / millisecondsPerDay;
+    return (treatAsUTC(endDate) - treatAsUTC(startDate)) / MS_PER_DAY;
   },
 
   addDays(date, days) {
@@ -41,7 +43,7 @@ const bizniz = {
 
   weekDaysBetween(startDate, endDate) {
     let start, end;
-    let reverse = this.dateIsBefore(startDate, endDate);
+    let reverse = this.dateIsBefore(endDate, startDate);
     if (reverse) {
       start = endDate;
       end = startDate;
@@ -50,8 +52,8 @@ const bizniz = {
       end = endDate;
     }
 
-    const startDay = startDate.getDay();
-    const totalDays = Math.abs(end.diff(start, 'days'));
+    const startDay = start.getDay();
+    const totalDays = Math.abs(this.daysBetween(start, end));
     const containedSundays = containedPeriodicValues(startDay, totalDays + startDay, 0, 7);
     const containedSaturdays = containedPeriodicValues(startDay, totalDays + startDay, 6, 7);
     const coefficient = reverse ? -1 : 1;
@@ -61,7 +63,7 @@ const bizniz = {
 
   weekendDaysBetween(startDate, endDate) {
     const totalDaysDiff = this.daysBetween(startDate, endDate);
-    const weekDays = this.weekDays(startDate, endDate);
+    const weekDays = this.weekDaysBetween(startDate, endDate);
 
     return totalDaysDiff - weekDays;
   },

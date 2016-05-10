@@ -2,6 +2,16 @@ global.chai = require('chai');
 global.sinon = require('sinon');
 global.chai.use(require('sinon-chai'));
 
+require('../fixtures/work-diff/sunday');
+require('../fixtures/work-diff/monday');
+require('../fixtures/work-diff/tuesday');
+require('../fixtures/work-diff/wednesday');
+require('../fixtures/work-diff/thursday');
+require('../fixtures/work-diff/friday');
+require('../fixtures/work-diff/saturday');
+require('../fixtures/modify/add');
+require('../fixtures/modify/subtract');
+
 require('babel-core/register');
 require('./setup')();
 

@@ -3,7 +3,6 @@ import bizniz from '../../src/bizniz';
 import generateDate from '../helpers/generate-date';
 import isSameDay from '../helpers/is-same-day';
 
-var DATE_FORMAT = 'YYYY-MM-DD';
 var start, calculated;
 
 describe('Adding weekdays', () => {
@@ -30,9 +29,7 @@ describe('Adding weekdays', () => {
         calculated = bizniz.addWeekDays(generateDate(start), addition);
         expect(isSameDay(solution, calculated)).to.be.true;
       });
-    });
 
-    _.each(fixtures.add.sunday, (solution, addition) => {
       it('when subtracting negative, should calculate the correct number of workdays between every two dates; ' + addition, () => {
         solution = generateDate(solution);
         calculated = bizniz.subtractWeekDays(generateDate(start), -addition);
@@ -52,9 +49,7 @@ describe('Adding weekdays', () => {
         calculated = bizniz.addWeekDays(generateDate(start), addition);
         expect(isSameDay(solution, calculated)).to.be.true;
       });
-    });
 
-    _.each(fixtures.add.monday, (solution, addition) => {
       it('when subtracting negative, should calculate the correct number of workdays between every two dates; ' + addition, () => {
         solution = generateDate(solution);
         calculated = bizniz.subtractWeekDays(generateDate(start), -addition);
@@ -74,9 +69,7 @@ describe('Adding weekdays', () => {
         calculated = bizniz.addWeekDays(generateDate(start), addition);
         expect(isSameDay(solution, calculated)).to.be.true;
       });
-    });
 
-    _.each(fixtures.add.tuesday, (solution, addition) => {
       it('when subtracting negative, should calculate the correct number of workdays between every two dates; ' + addition, () => {
         solution = generateDate(solution);
         calculated = bizniz.subtractWeekDays(generateDate(start), -addition);
@@ -96,9 +89,7 @@ describe('Adding weekdays', () => {
         calculated = bizniz.addWeekDays(generateDate(start), addition);
         expect(isSameDay(solution, calculated)).to.be.true;
       });
-    });
 
-    _.each(fixtures.add.wednesday, (solution, addition) => {
       it('when subtracting negative, should calculate the correct number of workdays between every two dates; ' + addition, () => {
         solution = generateDate(solution);
         calculated = bizniz.subtractWeekDays(generateDate(start), -addition);
@@ -118,9 +109,7 @@ describe('Adding weekdays', () => {
         calculated = bizniz.addWeekDays(generateDate(start), addition);
         expect(isSameDay(solution, calculated)).to.be.true;
       });
-    });
 
-    _.each(fixtures.add.thursday, (solution, addition) => {
       it('when subtracting negative, should calculate the correct number of workdays between every two dates; ' + addition, () => {
         solution = generateDate(solution);
         calculated = bizniz.subtractWeekDays(generateDate(start), -addition);
@@ -140,9 +129,7 @@ describe('Adding weekdays', () => {
         calculated = bizniz.addWeekDays(generateDate(start), addition);
         expect(isSameDay(solution, calculated)).to.be.true;
       });
-    });
 
-    _.each(fixtures.add.friday, (solution, addition) => {
       it('when subtracting negative, should calculate the correct number of workdays between every two dates; ' + addition, () => {
         solution = generateDate(solution);
         calculated = bizniz.subtractWeekDays(generateDate(start), -addition);
@@ -162,9 +149,7 @@ describe('Adding weekdays', () => {
         calculated = bizniz.addWeekDays(generateDate(start), addition);
         expect(isSameDay(solution, calculated)).to.be.true;
       });
-    });
 
-    _.each(fixtures.add.saturday, (solution, addition) => {
       it('when subtracting negative, should calculate the correct number of workdays between every two dates; ' + addition, () => {
         solution = generateDate(solution);
         calculated = bizniz.subtractWeekDays(generateDate(start), -addition);

@@ -2,7 +2,6 @@ import bizniz from '../../src/bizniz';
 
 describe('isWeekDay()', () => {
   it('should return false for Saturday', () => {
-    // May 7th, 2016-04
     const date = new Date(2016, 4, 7);
     expect(bizniz.isWeekDay(date)).to.be.false;
   });
@@ -13,7 +12,6 @@ describe('isWeekDay()', () => {
   });
 
   it('should return true for Monday', () => {
-    // May 7th, 2016-04
     const date = new Date(2016, 4, 9);
     expect(bizniz.isWeekDay(date)).to.be.true;
   });

@@ -1,12 +1,18 @@
 import gulp  from 'gulp';
 import loadPlugins from 'gulp-load-plugins';
+import fs from 'fs';
 import del  from 'del';
 import glob  from 'glob';
 import path  from 'path';
+import mkdirp from 'mkdirp';
 import {Instrumenter} from 'isparta';
-import webpack from 'webpack';
-import webpackStream from 'webpack-stream';
-import source  from 'vinyl-source-stream';
+import rollup from 'rollup';
+import jsonPlugin from 'rollup-plugin-json';
+import commonjsPlugin from 'rollup-plugin-commonjs';
+import rollupBabelPlugin from 'rollup-plugin-babel';
+import nodeResolve from 'rollup-plugin-node-resolve';
+import multiEntryPlugin from 'rollup-plugin-multi-entry';
+import rollupBabelEs2015Present from 'babel-preset-es2015-rollup';
 
 import mochaGlobals from './test/setup/.globals';
 import manifest  from './package.json';
@@ -57,29 +63,58 @@ function lintGulpfile() {
   return lint('gulpfile.babel.js');
 }
 
-function build() {
-  return gulp.src(path.join('src', config.entryFileName + '.js'))
-    .pipe($.plumber())
-    .pipe(webpackStream({
-      output: {
-        filename: exportFileName + '.js',
-        libraryTarget: 'umd',
-        library: config.mainVarName
-      },
-      module: {
-        loaders: [
-          { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' }
-        ]
-      },
-      devtool: 'source-map'
-    }))
-    .pipe(gulp.dest(destinationFolder))
-    .pipe($.filter(['*', '!**/*.js.map']))
-    .pipe($.rename(exportFileName + '.min.js'))
-    .pipe($.sourcemaps.init({ loadMaps: true }))
-    .pipe($.uglify())
-    .pipe($.sourcemaps.write('./'))
-    .pipe(gulp.dest(destinationFolder));
+function build(done) {
+  rollup.rollup({
+    entry: path.join('src', config.entryFileName + '.js'),
+    plugins: [
+      nodeResolve({
+        jsnext: true,
+        /*
+         * Uncomment the following line to specify external
+         * deps to exclude from the bundle. By default, everything
+         * is bundled into the build
+         */
+        // skip: ['jquery'],
+        main: true
+      }),
+      rollupBabelPlugin({
+        sourceMaps: true,
+        presets: [rollupBabelEs2015Present],
+        babelrc: false
+      }),
+      // This allows you to require in CJS modules
+      commonjsPlugin(),
+      // This allows you to require in JSON files
+      jsonPlugin()
+    ]
+  }).then(function(bundle) {
+    var result = bundle.generate({
+      format: 'umd',
+      sourceMap: 'inline',
+      sourceMapSource: config.entryFileName + '.js',
+      sourceMapFile: exportFileName + '.js',
+      moduleName: config.mainVarName
+    });
+    var code = `${result.code}\n//# sourceMappingURL=./${exportFileName}.js.map`;
+
+    // Write the generated sourcemap
+    mkdirp.sync(destinationFolder);
+    fs.writeFileSync(path.join(destinationFolder, exportFileName + '.js'), code);
+    fs.writeFileSync(path.join(destinationFolder, `${exportFileName}.js.map`), result.map.toString());
+
+    $.file(exportFileName + '.js', code, { src: true })
+      .pipe($.plumber())
+      .pipe($.sourcemaps.init({ loadMaps: true }))
+      .pipe($.sourcemaps.write('./', {addComment: false}))
+      .pipe(gulp.dest(destinationFolder))
+      .pipe($.filter(['*', '!**/*.js.map']))
+      .pipe($.rename(exportFileName + '.min.js'))
+      .pipe($.sourcemaps.init({ loadMaps: true }))
+      .pipe($.uglify())
+      .pipe($.sourcemaps.write('./'))
+      .pipe(gulp.dest(destinationFolder))
+      .on('end', done);
+  }).catch(console.error);
 }
 
 function _mocha() {
@@ -119,50 +154,67 @@ function watch() {
   gulp.watch(watchFiles, ['test']);
 }
 
-function testBrowser() {
+var firstBuild = true;
+function testBrowser(done) {
+
   // Our testing bundle is made up of our unit tests, which
   // should individually load up pieces of our application.
   // We also include the browser setup file.
   const testFiles = glob.sync('./test/unit/**/*.js');
   const allFiles = ['./test/setup/browser.js'].concat(testFiles);
 
-  // Lets us differentiate between the first build and subsequent builds
-  var firstBuild = true;
+  rollup.rollup({
+    entry: allFiles,
+    plugins: [
+      nodeResolve({
+        jsnext: true,
+        /*
+         * Uncomment the following line to specify external
+         * deps to exclude from the bundle. By default, everything
+         * is bundled into the build
+         */
+        // skip: ['jquery'],
+        main: true
+      }),
+      // This allows you to require in JSON files. It *must* be
+      // listed before Babel.
+      jsonPlugin(),
+      rollupBabelPlugin({
+        sourceMaps: true,
+        presets: [rollupBabelEs2015Present],
+        babelrc: false
+      }),
+      // This allows you to require in CJS modules
+      commonjsPlugin(),
 
-  // This empty stream might seem like a hack, but we need to specify all of our files through
-  // the `entry` option of webpack. Otherwise, it ignores whatever file(s) are placed in here.
-  return gulp.src('')
-    .pipe($.plumber())
-    .pipe(webpackStream({
-      watch: true,
-      entry: allFiles,
-      output: {
-        filename: '__spec-build.js'
-      },
-      module: {
-        loaders: [
-          // This is what allows us to author in future JavaScript
-          { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
-          // This allows the test setup scripts to load `package.json`
-          { test: /\.json$/, exclude: /node_modules/, loader: 'json-loader' }
-        ]
-      },
-      plugins: [
-        // By default, webpack does `n=>n` compilation with entry files. This concatenates
-        // them into a single chunk.
-        new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 })
-      ],
-      devtool: 'inline-source-map'
-    }, null, function() {
-      if (firstBuild) {
-        $.livereload.listen({port: 35729, host: 'localhost', start: true});
-        var watcher = gulp.watch(watchFiles, ['lint']);
-      } else {
-        $.livereload.reload('./tmp/__spec-build.js');
-      }
-      firstBuild = false;
-    }))
-    .pipe(gulp.dest('./tmp'));
+      // This is necessary to resolve all of the test paths
+      multiEntryPlugin.default()
+    ]
+  }).then(function(bundle) {
+    var result = bundle.generate({
+      format: 'umd',
+      sourceMap: 'inline',
+      sourceMapSource: config.entryFileName + '.js',
+      sourceMapFile: exportFileName + '.js',
+      moduleName: config.mainVarName
+    });
+    var code = result.code + '\n//# sourceMappingURL=./__spec-build.js.map';
+
+    // Write the generated sourcemap
+    mkdirp.sync('tmp');
+    fs.writeFileSync(path.join('tmp', '__spec-build.js'), code);
+    fs.writeFileSync(path.join('tmp', '__spec-build.js.map'), result.map.toString());
+
+    if (firstBuild) {
+      $.livereload.listen({port: 35729, host: 'localhost', start: true});
+      var watcher = gulp.watch(watchFiles, ['test-browser']);
+    } else {
+      $.livereload.reload('./tmp/__spec-build.js');
+    }
+    firstBuild = false;
+
+    done();
+  }).catch(console.error);
 }
 
 // Remove the built files

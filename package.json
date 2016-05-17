@@ -15,7 +15,18 @@
     "type": "git",
     "url": "https://github.com/jmeas/bizniz.js.git"
   },
-  "keywords": [],
+  "keywords": [
+    "time",
+    "weekdays",
+    "weekday",
+    "workdays",
+    "workday",
+    "weekend",
+    "weekends",
+    "business",
+    "days",
+    "moment"
+  ],
   "author": "Jmeas <jellyes2@gmail.com>",
   "license": "MIT",
   "bugs": {

@@ -44,7 +44,7 @@ const bizniz = {
     let distance = startDay - currentDay;
     date.setDate(date.getDate() + distance);
     let daysCount = 0;
-    while(this.isWeekendDay(date)){
+    while (this.isWeekendDay(date)) {
       ++daysCount;
       date = this.addDays(date,direction);
     }
@@ -79,8 +79,8 @@ const bizniz = {
     const startDay = start.getDay();
     const totalDays = Math.abs(this.daysBetween(start, end));
     let containedWeekendDays = 0;
-    for(let day of weekEndSetting){
-      containedWeekendDays += containedPeriodicValues(startDay, totalDays + startDay, day, 7)
+    for (let day of weekEndSetting) {
+      containedWeekendDays += containedPeriodicValues(startDay, totalDays + startDay, day, 7);
     }
     const coefficient = reverse ? -1 : 1;
 
@@ -118,8 +118,6 @@ const bizniz = {
     days += absIncrement + weekendsInbetween * weekEndSetting.length;
 
     return this.addDays(date, sign * days);
-
-    
   },
 
   subtractWeekDays(date, days) {

@@ -38,7 +38,9 @@ const bizniz = {
   },
   daysUntilWeekdays(startDay, direction) {
     //checks how many days until the weekend.
-    if (weekEndSetting.indexOf(startDay) === -1) return 0
+    if (weekEndSetting.indexOf(startDay) === -1) {
+      return 0;
+    }
 
     direction = determineSign(direction);
     let date =  new Date();

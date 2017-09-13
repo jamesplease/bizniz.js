@@ -38,12 +38,15 @@ const bizniz = {
   },
   daysUntilWeekdays(startDay, direction) {
     //checks how many days until the weekend.
+    if (weekEndSetting.indexOf(startDay) === -1) return 0
+
     direction = determineSign(direction);
     let date =  new Date();
     let currentDay = date.getDay();
     let distance = startDay - currentDay;
     date.setDate(date.getDate() + distance);
     let daysCount = 0;
+    date = this.addDays(date,direction);
     while (this.isWeekendDay(date)) {
       ++daysCount;
       date = this.addDays(date,direction);

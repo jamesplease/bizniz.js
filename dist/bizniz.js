@@ -166,12 +166,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var day = date.getDay();
 	    var absIncrement = Math.abs(days);
 	
-	    
 		var days = this.daysUntilWeekdays(day, sign);
 	
 	    // Add padding for weekends.
 	    var paddedAbsIncrement = absIncrement;
-	    console.log(weekEndSetting.indexOf(day),weekEndSetting, day);
 	    if (weekEndSetting.indexOf(day) === -1 && sign > 0) {
 	      paddedAbsIncrement += day;
 	    } else if (weekEndSetting.indexOf(day) === -1 && sign < 0) {

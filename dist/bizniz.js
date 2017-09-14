@@ -99,14 +99,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  daysUntilWeekdays(startDay, direction) {
 	    //checks how many days until the weekend.
+	    if(weekEndSetting.indexOf(startDay) === -1) return 0
 	    direction = determineSign(direction);
 	    var date =  new Date();
 	    var currentDay = date.getDay();
 	    var distance = startDay - currentDay;
 	    date.setDate(date.getDate() + distance);
 	    var daysCount = 0;
+	    date = this.addDays(date,direction);
 	    while(this.isWeekendDay(date)){
-	      ++daysCount;
+	      daysCount++;
 	      date = this.addDays(date,direction);
 	    }
 	    return daysCount;

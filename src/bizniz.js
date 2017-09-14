@@ -37,7 +37,7 @@ const bizniz = {
     return (treatAsUTC(endDate) - treatAsUTC(startDate)) / MS_PER_DAY;
   },
   daysUntilWeekdays(startDay, direction) {
-    //checks how many days until the weekend.
+    //checks how many days until the weeke days.
     if (weekEndSetting.indexOf(startDay) === -1) {
       return 0;
     }
@@ -54,8 +54,23 @@ const bizniz = {
       date = this.addDays(date,direction);
     }
     return daysCount;
+  },    
+  daysUntilWeekend(startDay, direction) {
+      //checks how many days until the weekend.
+      if(weekEndSetting.indexOf(startDay) !== -1) return 0
+      direction = determineSign(direction);
+      let date =  new Date();
+      let currentDay = date.getDay();
+      let distance = startDay - currentDay;
+      date.setDate(date.getDate() + distance);
+      let daysCount = 1;
+      date = this.addDays(date,direction);
+      while (this.isWeekDay(date)) {
+        daysCount++;
+        date = this.addDays(date,direction);
+      }
+      return daysCount;
   },
-
   addDays(date, days) {
     var result = new Date(date.getTime());
     result.setDate(result.getDate() + days);
@@ -109,12 +124,8 @@ const bizniz = {
     var days = this.daysUntilWeekdays(day, sign);
 
     // Add padding for weekends.
-    var paddedAbsIncrement = absIncrement;
-    if (weekEndSetting.indexOf(day) === -1 && sign > 0) {
-      paddedAbsIncrement += day;
-    } else if (weekEndSetting.indexOf(day) === -1 && sign < 0) {
-      paddedAbsIncrement += 6 - day;
-    }
+    var paddedAbsIncrement = absIncrement + this.daysUntilWeekend(day, -1 * sign);
+
     var weekendsInbetween =
       Math.max(Math.floor(paddedAbsIncrement / workWeekLength) - 1, 0) +
       (paddedAbsIncrement > workWeekLength && paddedAbsIncrement % workWeekLength > 0 ? 1 : 0);

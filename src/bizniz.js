@@ -54,22 +54,24 @@ const bizniz = {
       date = this.addDays(date,direction);
     }
     return daysCount;
-  },    
+  },
   daysUntilWeekend(startDay, direction) {
-      //checks how many days until the weekend.
-      if(weekEndSetting.indexOf(startDay) !== -1) return 0
-      direction = determineSign(direction);
-      let date =  new Date();
-      let currentDay = date.getDay();
-      let distance = startDay - currentDay;
-      date.setDate(date.getDate() + distance);
-      let daysCount = 1;
+    //checks how many days until the weekend.
+    if (weekEndSetting.indexOf(startDay) !== -1) {
+      return 0;
+    }
+    direction = determineSign(direction);
+    let date =  new Date();
+    let currentDay = date.getDay();
+    let distance = startDay - currentDay;
+    date.setDate(date.getDate() + distance);
+    let daysCount = 1;
+    date = this.addDays(date,direction);
+    while (this.isWeekDay(date)) {
+      daysCount++;
       date = this.addDays(date,direction);
-      while (this.isWeekDay(date)) {
-        daysCount++;
-        date = this.addDays(date,direction);
-      }
-      return daysCount;
+    }
+    return daysCount;
   },
   addDays(date, days) {
     var result = new Date(date.getTime());

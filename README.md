@@ -2,11 +2,10 @@
 
 Constant-time business utilities for the western work week
 
-[![Travis build status](http://img.shields.io/travis/jmeas/bizniz.js.svg?style=flat)](https://travis-ci.org/jmeas/bizniz.js)
-[![Code Climate](https://codeclimate.com/github/jmeas/bizniz.js/badges/gpa.svg)](https://codeclimate.com/github/jmeas/bizniz.js)
+[![Travis build status](http://img.shields.io/travis/jamesplease/bizniz.js.svg?style=flat)](https://travis-ci.org/jamesplease/bizniz.js)
 [![Test Coverage](https://codeclimate.com/github/jmeas/bizniz.js/badges/coverage.svg)](https://codeclimate.com/github/jmeas/bizniz.js)
-[![Dependency Status](https://david-dm.org/jmeas/bizniz.js.svg)](https://david-dm.org/jmeas/bizniz.js)
-[![devDependency Status](https://david-dm.org/jmeas/bizniz.js/dev-status.svg)](https://david-dm.org/jmeas/bizniz.js#info=devDependencies)
+[![Dependency Status](https://david-dm.org/jamesplease/bizniz.js.svg)](https://david-dm.org/jamesplease/bizniz.js)
+[![devDependency Status](https://david-dm.org/jamesplease/bizniz.js/dev-status.svg)](https://david-dm.org/jamesplease/bizniz.js#info=devDependencies)
 
 ### About
 

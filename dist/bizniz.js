@@ -66,7 +66,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var WEEKEND_DAYS = [0, 6];
+	var DEFAULT_WEEKEND_DAYS = [0, 6];
+	var DEFAULT_WORK_WEEK_LENGTH = 5;
+	var weekEndSetting = DEFAULT_WEEKEND_DAYS;
+	var workWeekLength = DEFAULT_WORK_WEEK_LENGTH;
 	// The number of milliseconds in one day
 	var MS_PER_DAY = 24 * 60 * 60 * 1000;
 	
@@ -85,6 +88,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	var bizniz = {
+	  getWeekDays() {
+	    return {weekEndSetting: weekEndSetting,
+	    	    workWeekLength: workWeekLength}
+	  },
+	  setWeekend(weekEndDays) {
+	    weekEndSetting = [].concat(weekEndDays);
+	    workWeekLength = 7 - weekEndSetting.length;
+	    return this;
+	  },
+	  daysUntilWeekdays(startDay, direction) {
+	    //checks how many days until the weekend.
+	    if(weekEndSetting.indexOf(startDay) === -1) return 0
+	    direction = determineSign(direction);
+	    var date =  new Date();
+	    var currentDay = date.getDay();
+	    var distance = startDay - currentDay;
+	    date.setDate(date.getDate() + distance);
+	    var daysCount = 0;
+	    date = this.addDays(date,direction);
+	    while(this.isWeekendDay(date)){
+	      daysCount++;
+	      date = this.addDays(date,direction);
+	    }
+	    return daysCount;
+	  },
 	  dateIsBefore: function dateIsBefore(startDate, endDate) {
 	    return startDate.getTime() < endDate.getTime();
 	  },
@@ -97,7 +125,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return result;
 	  },
 	  isWeekDay: function isWeekDay(date) {
-	    return WEEKEND_DAYS.indexOf(date.getDay()) === -1;
+	    return weekEndSetting.indexOf(date.getDay()) === -1;
 	  },
 	  isWeekendDay: function isWeekendDay(date) {
 	    return !this.isWeekDay(date);
@@ -116,11 +144,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var startDay = start.getDay();
 	    var totalDays = Math.abs(this.daysBetween(start, end));
-	    var containedSundays = (0, _containedPeriodicValues2.default)(startDay, totalDays + startDay, 0, 7);
-	    var containedSaturdays = (0, _containedPeriodicValues2.default)(startDay, totalDays + startDay, 6, 7);
+
+	    var containedWeekendDays = 0;
+		for(var day of weekEndSetting){
+		  containedWeekendDays += (0, _containedPeriodicValues2.default)(startDay, totalDays + startDay, day, 7)
+		}
 	    var coefficient = reverse ? -1 : 1;
 	
-	    return coefficient * (totalDays - (containedSaturdays + containedSundays));
+	    return coefficient * (totalDays - (containedWeekendDays));
 	  },
 	  weekendDaysBetween: function weekendDaysBetween(startDate, endDate) {
 	    var totalDaysDiff = this.daysBetween(startDate, endDate);
@@ -137,25 +168,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var day = date.getDay();
 	    var absIncrement = Math.abs(days);
 	
-	    var days = 0;
-	
-	    if (day === 0 && sign === -1) {
-	      days = 1;
-	    } else if (day === 6 && sign === 1) {
-	      days = 1;
-	    }
+		var days = this.daysUntilWeekdays(day, sign);
 	
 	    // Add padding for weekends.
 	    var paddedAbsIncrement = absIncrement;
-	    if (day !== 0 && day !== 6 && sign > 0) {
+	    if (weekEndSetting.indexOf(day) === -1 && sign > 0) {
 	      paddedAbsIncrement += day;
-	    } else if (day !== 0 && day !== 6 && sign < 0) {
+	    } else if (weekEndSetting.indexOf(day) === -1 && sign < 0) {
 	      paddedAbsIncrement += 6 - day;
 	    }
-	    var weekendsInbetween = Math.max(Math.floor(paddedAbsIncrement / 5) - 1, 0) + (paddedAbsIncrement > 5 && paddedAbsIncrement % 5 > 0 ? 1 : 0);
-	
+	    var weekendsInbetween =
+		      Math.max(Math.floor(paddedAbsIncrement / workWeekLength) - 1, 0) +
+		      (paddedAbsIncrement > workWeekLength && paddedAbsIncrement % workWeekLength > 0 ? 1 : 0);
+
 	    // Add the increment and number of weekends.
-	    days += absIncrement + weekendsInbetween * 2;
+	    days += absIncrement + weekendsInbetween * weekEndSetting.length;
 	
 	    return this.addDays(date, sign * days);
 	  },
